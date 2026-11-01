@@ -8,6 +8,6 @@ class User(AbstractUser):
         STUDENT = "student", "Student"
         INSTRUCTOR = "instructor", "Instructor"
         
-    email = models.CharField(unique=True)
+    email = models.EmailField(unique=True)
     role = models.CharField(max_length=15, choices=Role.choices, default=Role.STUDENT)
         
