@@ -14,7 +14,7 @@ from .models import User
 # Create your views here.
 @swagger_auto_schema(method='post',request_body=RegisterSerializer,operation_description="User Registration API")
 @api_view(['POST'])
-def register(request):
+def Register(request):
     serializer = RegisterSerializer(data=request.data)
     
     if serializer.is_valid():
@@ -27,13 +27,13 @@ def register(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def profile(request):
+def Profile(request):
       serializer = ProfileSerializer(request.user)
       return Response({'message': 'profile retrive successfuly.',
                        'user': serializer.data
 })
 
-# log in api use jwt
+# login api use jwt
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
