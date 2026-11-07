@@ -7,6 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework import status
+from users.utils import get_tokens_for_user
 from django.http import request
 from .models import User
 
@@ -37,34 +38,65 @@ def profile(request):
 })
 
 # login api use jwt
+# @swagger_auto_schema(method='post',request_body=LoginSerializer,operation_description="User Login API")
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# def login(request):
+#     serializer = LoginSerializer(data=request.data)
+#     serializer.is_valid(raise_exception=True)
+    
+    
+#     email = serializer.validated_data['email']
+#     password = serializer.validated_data['password']
+
+#     user = authenticate(request, email=email, password=password)
+        
+
+#     if user is not None:
+#         tokens = get_tokens_for_user(user)
+#         return Response({
+#             'message': 'Login successful.',
+#             'refresh': str(tokens['refresh']),
+#             'access': str(tokens['access']),
+#             'user': {
+#                 'id': user.id,
+#                 'username': user.username,
+#                 'email': user.email,
+#                 'role': user.role
+#             }
+#         }, status=status.HTTP_200_OK)
+        
+#     return Response({'error':'Invalid email or password'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 @swagger_auto_schema(method='post',request_body=LoginSerializer,operation_description="User Login API")
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def login(request):
+def signin(request):
     serializer = LoginSerializer(data=request.data)
-    if serializer.is_valid():
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
+    serializer.is_valid(raise_exception=True)
+    
     email = serializer.validated_data['email']
     password = serializer.validated_data['password']
-
+    
     user = authenticate(request, email=email, password=password)
-
+    
     if user is not None:
-        return Response({'error':'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
-    refresh = RefreshToken.for_user(user)
+        tokens = get_tokens_for_user(user)
+        return Response({
+            'message': 'Login successful.',
+            'refresh': str(tokens['refresh']),
+            'access': str(tokens['access']),
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'role': user.role
+            }
+        }, status=status.HTTP_200_OK)
+        
+    return Response({'error':'Invalid email or password'}, status=status.HTTP_400_BAD_REQUEST)
 
-    return Response({
-        'message': 'Login successful.',
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
-        'user': {
-            'id': user.id,
-            'username': user.username,
-            'email': user.email,
-            'role': user.role
-        }
-    }, status=status.HTTP_200_OK)
+
+
+
