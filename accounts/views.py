@@ -13,7 +13,15 @@ from drf_spectacular.utils import(
 )
 
 @extend_schema(
-    tags=['']
+    tags=['course'],
+    summary='List and Create Courses',
+    description='Retrieve a list of all courses or create a new course.',
+    request=CourseSerializer,
+    responses={
+        200:CourseSerializer(many=True),
+        201:CourseSerializer,
+        400:OpenApiResponse(description='Validation Error')
+    },
 )
     
 @api_view(['GET','POST'])
@@ -28,10 +36,22 @@ def course_list_create(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
+@extend_schema(
+    tags=['course'],
+    summary='Retrieve, update or delete a course',
+    description='Retrieve, update or delete a specific course.',
+    request=CourseSerializer,
+    responses={
+        200:CourseSerializer,
+        204:OpenApiResponse(description='Course Deleted Successfully.'),
+        400:OpenApiResponse(description='Validation Error'),
+        404:OpenApiResponse(description='Course Not Found'),
+    },
+)
 
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def course_detail(request, pk):
-    course = get_object_or_404(course, pk=pk)
+    course = get_object_or_404(Course, pk=pk)
 
     if request.method == 'GET':
         serializer = CourseSerializer(course)
