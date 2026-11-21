@@ -1,25 +1,26 @@
 from rest_framework import serializers
-from .models import User
+from .models import(
+    Course,
+)
 
-
-class SignupSerializer(serializers.ModelSerializer):
+# create your serializer here.
+class CourseSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Course
         fields = [
-        'id',
-        'username',
-        'password'
+            'id',
+            'title',
+            'description',
+            'slug', 
+            'price',
+            'thumbnail',
+            'course_file',
+            'created_at',
+            'updated_at',
     ]
-
-
-class SigninSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['email', 'password']
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'created_at']
-        read_only_fields = ['id', 'created_at']
+        read_only_fields=[
+            'id',
+            'slug',
+            'created_at',
+            'updated_at',
+        ]
