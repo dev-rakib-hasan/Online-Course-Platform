@@ -13,7 +13,7 @@ from drf_spectacular.utils import(
 )
 
 @extend_schema(
-    tags=['course'],
+    tags=['Course'],
     summary='List and Create Courses',
     description='Retrieve a list of all courses or create a new course.',
     request=CourseSerializer,
@@ -31,13 +31,13 @@ def course_list_create(request):
         serializer = CourseSerializer(courses, many=True)
         return Response(serializer.data)
     
-        serializer = CourseSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    serializer = CourseSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
     
 @extend_schema(
-    tags=['course'],
+    tags=['Course'],
     summary='Retrieve, update or delete a course',
     description='Retrieve, update or delete a specific course.',
     request=CourseSerializer,
@@ -59,12 +59,13 @@ def course_detail(request, pk):
     
     elif request.method in ['PUT','PATCH']:
         if request.method == 'PATCH':
-            serializer = CourseSerializer(course, data=request.data, partial=True)
+         serializer = CourseSerializer(course, data=request.data, partial=True)
         else: 
             serializer = CourseSerializer(course, data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
+            
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
         
     elif request.method == 'DELETE':
         course.delete()

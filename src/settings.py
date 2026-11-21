@@ -126,8 +126,8 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Online course Platform API',
-    'DESCRIPTION': 'Your project description',
+    'TITLE': 'Online Course Platform ',
+    'DESCRIPTION': 'Course Management API',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     

@@ -36,7 +36,7 @@ class Course(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = generate_unique_slug(self, self.name)
+            self.slug = generate_unique_slug(self, self.title)
         super().save(*args, **kwargs)
 
     def __str__(self):
