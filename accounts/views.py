@@ -2,14 +2,19 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Course
-from .serializers import(
-    CourseSerializer,
-)
 from drf_spectacular.utils import(
     extend_schema,
     OpenApiResponse,
     OpenApiParameter,
+)
+from .models import(
+    Course,
+    Lesson,
+)
+
+from .serializers import(
+    CourseSerializer,
+    LessonSerializer,
 )
 
 @extend_schema(
@@ -76,5 +81,62 @@ def course_detail(request, pk):
 #================
 # Lesson API
 #================
-       
+
+@extend_schema(
+    tags=['Lesson'],
+    summary='List and Create Lesson',
+    description='Retrieve a list of all lesson or create a new lesson.',
+    request=LessonSerializer,
+    responses={
+        200:LessonSerializer(many=True),
+        204:LessonSerializer,
+        400:OpenApiResponse(description='Validation Error')
+    },
+)
+    
 # Lesson List & Create
+@api_view(['GET','POST'])
+def lesson_list_create(request):
+    if request.method == 'GET':
+        lessons = Lesson.objects.all()
+        serializer = LessonSerializer(lessons, many=True)
+        return Response(serializer.data)
+    serializer = LessonSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@extend_schema(
+    tags=['Lesson'],
+    summary='Retrieve, Update or Delete Lesson.',
+    description='Retrieve Update or Delete Specific Lesson.',
+    request=LessonSerializer,
+    responses={
+        200:LessonSerializer,
+        204:OpenApiResponse(description='Lesson Deleted Successfully.'),
+        400:OpenApiResponse(description='Validation Error.'),
+        404:OpenApiResponse(description='Lesson Not Found')
+    },
+)
+
+# Lesson Detail, Update & Delete
+@api_view(['GET','PUT','PATCH','DELETE'])
+def lesson_detail(request, pk):
+    lesson = get_object_or_404(Lesson, pk=pk)
+    if request.method == 'GET':
+      serializer = LessonSerializer(lesson)
+      return Response(serializer.data)
+  
+    elif request.method in ['PUT','PATCH']:
+        if request.method == 'GET':
+           serializer = LessonSerializer(lesson, data=request.data, partial=True)
+        else:
+          serializer = LessonSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+     
+    elif request.method == 'DELETE':
+        lesson.delete()
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+        
