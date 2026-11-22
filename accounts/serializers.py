@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import(
     Course,
     Lesson,
+    Enrollment,
 )
 
 # create your serializer here.
@@ -31,10 +32,11 @@ class LessonSerializer(serializers.ModelSerializer):
         model = Lesson
         fields = [
             'id',
+            'course',
             'title',
             'description',
             'slug',
-            'video_urls',
+            'video_url',
             'duration',
             'order',
             'created_at',
@@ -45,4 +47,20 @@ class LessonSerializer(serializers.ModelSerializer):
             'slug',
             'created_at',
             'updated_at',
+        ]
+        
+class EnrollmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Enrollment
+        fields = [
+            'id',
+            'course',
+            'student',
+            'enrolled_at'
+            
+        ]
+        read_only_fields = [
+            'id',
+            'student',
+            'enrolled_at'
         ]

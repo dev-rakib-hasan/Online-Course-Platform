@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.utils.text import slugify
 
 
@@ -53,7 +54,7 @@ class Lesson(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     slug = models.SlugField(null=True, blank=True)
-    video_urls = models.URLField(null=True, blank=True)
+    video_url = models.URLField(null=True, blank=True)
     duration = models.PositiveIntegerField(default=0)
     order = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -68,3 +69,27 @@ class Lesson(models.Model):
             return self.title
         class Meta:
             ordering = ['order']
+#           
+            
+class Enrollment(models.Model):
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='enrollments'
+    )
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='enrollments'
+        )
+    enrolled_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields = ['student','course'],
+                name = 'unique_student_course_enrollment'
+            )
+        ]
+    def __str__(self):
+        return f'{self.student}-{self.course}'

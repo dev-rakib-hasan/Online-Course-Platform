@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import(
@@ -10,11 +11,13 @@ from drf_spectacular.utils import(
 from .models import(
     Course,
     Lesson,
+    Enrollment,
 )
 
 from .serializers import(
     CourseSerializer,
     LessonSerializer,
+    EnrollmentSerializer
 )
 
 @extend_schema(
@@ -128,7 +131,7 @@ def lesson_detail(request, pk):
       return Response(serializer.data)
   
     elif request.method in ['PUT','PATCH']:
-        if request.method == 'GET':
+        if request.method == 'PATCH':
            serializer = LessonSerializer(lesson, data=request.data, partial=True)
         else:
           serializer = LessonSerializer(data=request.data)
@@ -138,5 +141,54 @@ def lesson_detail(request, pk):
      
     elif request.method == 'DELETE':
         lesson.delete()
-        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
         
+#==================
+# Enrollment API
+#==================
+
+@extend_schema(
+    tags=['Enrollment'],
+    summary='Get all enrollments',
+    description='Get all enrollments of the logged-in student.',
+    request=EnrollmentSerializer,
+    responses={
+        200: EnrollmentSerializer(many=True)
+    }
+)
+
+@api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
+def enrollment_list_create(request):
+    if request.method == 'GET':
+        enrollment = Enrollment.objects.filter(
+            student = request.user
+        )
+        serializer = EnrollmentSerializer(enrollment, many=True)
+        return Response(serializer.data)
+    serializer = EnrollmentSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(student=request.user)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@extend_schema(
+    tags=['Enrollment'],
+    summary='Get enrollment details',
+    description='Retrieve a specific enrollment by ID.',
+    request=EnrollmentSerializer,
+    responses={
+        200: EnrollmentSerializer,
+        404: OpenApiResponse(description='Enrollment not found')
+    }
+)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def enrollment_detail(request, pk):
+    try:
+       enrollment = Enrollment.objects.get(pk=pk, student=request.user)
+    except Enrollment.DoesNotExist:
+        return Response({'message':'Not Found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = EnrollmentSerializer(enrollment)
+    return Response(serializer.data)
