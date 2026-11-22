@@ -198,8 +198,19 @@ def enrollment_detail(request, pk):
 #========================
 # Lesson Progress API
 #========================
-
+@extend_schema(
+    tegs=['Lesson_Progress'],
+    summary='Create Lesson Progress',
+    description="Create lesson progress for the logged-in student.",
+    request=LesssonProgressSerializer,
+    responses={
+        201:LesssonProgressSerializer,
+        404:OpenApiResponse(description='Bad Request'),
+        404:OpenApiResponse(description='Not Found')
+    }
+)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def lesson_progress(request):
     serializer = LesssonProgressSerializer(data=request.data)
       
