@@ -23,7 +23,9 @@ from drf_spectacular.utils import(
         400:OpenApiResponse(description='Validation Error')
     },
 )
-    
+#===============
+# Course API
+#=============== 
 @api_view(['GET','POST'])
 def course_list_create(request):
     if request.method == 'GET':
@@ -70,5 +72,9 @@ def course_detail(request, pk):
     elif request.method == 'DELETE':
         course.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-        
-    
+ 
+#================
+# Lesson API
+#================
+       
+# Lesson List & Create

@@ -44,4 +44,27 @@ class Course(models.Model):
     
     
 
-
+class Lesson(models.Model):
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='lessons',
+    )
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    slug = models.SlugField(null=True, blank=True)
+    video_urls = models.URLField(null=True, blank=True)
+    duration = models.PositiveIntegerField(default=0)
+    order = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = generate_unique_slug(self,  self.title)
+        super().save(*args, **kwargs)
+        
+        def __str__(self):
+            return self.title
+        class Meta:
+            ordering = ['order']
