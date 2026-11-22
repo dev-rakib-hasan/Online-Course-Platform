@@ -12,12 +12,14 @@ from .models import(
     Course,
     Lesson,
     Enrollment,
+    LessonProgress,
 )
 
 from .serializers import(
     CourseSerializer,
     LessonSerializer,
-    EnrollmentSerializer
+    EnrollmentSerializer,
+    LesssonProgressSerializer
 )
 
 @extend_schema(
@@ -192,3 +194,17 @@ def enrollment_detail(request, pk):
     
     serializer = EnrollmentSerializer(enrollment)
     return Response(serializer.data)
+
+#========================
+# Lesson Progress API
+#========================
+
+@api_view(['POST'])
+def lesson_progress(request):
+    serializer = LesssonProgressSerializer(data=request.data)
+      
+    if serializer.is_valid():
+          serializer.save(student=request.user) 
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.erro,status=status.HTTP_404_NOT_FOUND)
+  
