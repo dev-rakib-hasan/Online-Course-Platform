@@ -19,7 +19,7 @@ from .serializers import(
     CourseSerializer,
     LessonSerializer,
     EnrollmentSerializer,
-    LesssonProgressSerializer
+    LessonProgressSerializer
 )
 
 @extend_schema(
@@ -50,7 +50,7 @@ def course_list_create(request):
     
 @extend_schema(
     tags=['Course'],
-    summary='Retrieve, update or delete a course',
+    summary='Retrieve, Update or Delete Course',
     description='Retrieve, update or delete a specific course.',
     request=CourseSerializer,
     responses={
@@ -151,7 +151,7 @@ def lesson_detail(request, pk):
 
 @extend_schema(
     tags=['Enrollment'],
-    summary='Get all enrollments',
+    summary='Create Course Enrollment',
     description='Get all enrollments of the logged-in student.',
     request=EnrollmentSerializer,
     responses={
@@ -199,20 +199,20 @@ def enrollment_detail(request, pk):
 # Lesson Progress API
 #========================
 @extend_schema(
-    tegs=['Lesson_Progress'],
+    tags=['Lesson Progress'],
     summary='Create Lesson Progress',
     description="Create lesson progress for the logged-in student.",
-    request=LesssonProgressSerializer,
+    request=LessonProgressSerializer,
     responses={
-        201:LesssonProgressSerializer,
-        404:OpenApiResponse(description='Bad Request'),
+        201:LessonProgressSerializer,
+        400:OpenApiResponse(description='Bad Request'),
         404:OpenApiResponse(description='Not Found')
-    }
+    },
 )
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def lesson_progress(request):
-    serializer = LesssonProgressSerializer(data=request.data)
+    serializer = LessonProgressSerializer(data=request.data)
       
     if serializer.is_valid():
           serializer.save(student=request.user) 

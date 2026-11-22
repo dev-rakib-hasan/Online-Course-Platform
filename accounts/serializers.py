@@ -66,12 +66,13 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'enrolled_at'
         ]
 
-class LesssonProgressSerializer(serializers.ModelSerializer):
+class LessonProgressSerializer(serializers.ModelSerializer):
     class Meta:
         model = LessonProgress
         fields = [
             'id',
             'student',
+            'lesson',
             'completed',
             'completed_at',    
         ]

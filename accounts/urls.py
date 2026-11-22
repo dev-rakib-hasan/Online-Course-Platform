@@ -11,4 +11,6 @@ urlpatterns = [
     # Enrollment API URLs
     path('enrollments/', views.enrollment_list_create, name='enrollment_list_create'),
     path('enrollment/<int:pk>/', views.enrollment_detail, name='enrollment_detail'),
+    # Lesson Progress URLs
+    path('lesson_progress/', views.lesson_progress, name='lesson_progress')
 ]
